@@ -14,7 +14,7 @@ public class JsonUtil {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(JsonUtil.class);
     private static ObjectMapper objectMapper = null;
-    private static final DateFormat df = new SimpleDateFormat("yyyy-MM-dd");
+    private static final DateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 
     public static ObjectMapper GetDefaultModelMapper() {
         if (objectMapper == null) {
