@@ -5,12 +5,6 @@ on:
     branches: [ master, dev ]
     tags:
       - 'v*'  # Triggers on version tags like v1.0.0
-  pull_request:
-    branches: [ master, dev ]
-
-permissions:
-  contents: write
-  packages: write
 
 jobs:
   test:
@@ -61,11 +55,15 @@ jobs:
       - name: Get version from tag
         id: get_version
         run: |
-          # Generate version based on commit info for master branch releases
-          COMMIT_SHA=$(git rev-parse --short HEAD)
-          TIMESTAMP=$(date +%Y%m%d-%H%M%S)
-          VERSION="${TIMESTAMP}-${COMMIT_SHA}"
-          echo "VERSION=$VERSION" >> $GITHUB_OUTPUT
+          if [[ $GITHUB_REF == refs/tags/* ]]; then
+            VERSION=${GITHUB_REF#refs/tags/v}
+            echo "VERSION=$VERSION" >> $GITHUB_OUTPUT
+            echo "IS_TAG=true" >> $GITHUB_OUTPUT
+          else
+            VERSION=$(mvn help:evaluate -Dexpression=project.version -q -DforceStdout)-SNAPSHOT
+            echo "VERSION=$VERSION" >> $GITHUB_OUTPUT
+            echo "IS_TAG=false" >> $GITHUB_OUTPUT
+          fi
           echo "Detected version: $VERSION"
 
       - name: Update Maven version
@@ -90,14 +88,25 @@ jobs:
           name: ${{ steps.jar_info.outputs.JAR_NAME }}
           path: ${{ steps.jar_info.outputs.JAR_FILE }}
 
-      - name: Create Release and Upload JAR
+      - name: Create Release
         if: startsWith(github.ref, 'refs/tags/v')
+        id: create_release
+        uses: actions/create-release@v1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: |
-          # Create the release
-          gh release create ${{ github.ref_name }} \
-            --title "Release ${{ github.ref_name }}" \
-            --notes "Release ${{ github.ref_name }}" \
-            --latest \
-            ${{ steps.jar_info.outputs.JAR_FILE }}
+        with:
+          tag_name: ${{ github.ref_name }}
+          release_name: Release ${{ github.ref_name }}
+          draft: false
+          prerelease: false
+
+      - name: Upload JAR to Release
+        if: startsWith(github.ref, 'refs/tags/v')
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: ${{ steps.jar_info.outputs.JAR_FILE }}
+          asset_name: ${{ steps.jar_info.outputs.JAR_NAME }}
+          asset_content_type: application/java-archive
