@@ -5,8 +5,6 @@ on:
     branches: [ master, dev ]
     tags:
       - 'v*'  # Triggers on version tags like v1.0.0
-  pull_request:
-    branches: [ master, dev ]
 
 jobs:
   test:
@@ -35,7 +33,7 @@ jobs:
   build-and-release:
     needs: test
     runs-on: ubuntu-latest
-    if: github.event_name == 'push' && (github.ref == 'refs/heads/master' || startsWith(github.ref, 'refs/tags/v'))
+    if: github.event_name == 'push' && startsWith(github.ref, 'refs/tags/v')
 
     steps:
       - name: Checkout code
