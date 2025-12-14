@@ -19,5 +19,6 @@ public class BaseResponse extends BaseDto {
     private String status;
     private String message; // Could be String or BoostMessageResponse
     private String code;
+    private int httpCode;
 
 }

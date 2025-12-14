@@ -1,4 +1,4 @@
-package com.piggymade.helper.pageable;
+package com.piggymade.model.pageable;
 
 import lombok.Data;
 

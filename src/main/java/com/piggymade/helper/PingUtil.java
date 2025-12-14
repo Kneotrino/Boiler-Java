@@ -15,8 +15,7 @@ public class PingUtil {
             connection.connect();
             return true;
         } catch (Exception e) {
-            log.error("Error ping url "+url,e);
-
+            log.error("Error ping url {}", url, e);
             // todo Handle exceptions
             return false;
         }
