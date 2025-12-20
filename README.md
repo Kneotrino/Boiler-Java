@@ -1,25 +1,64 @@
-This is a request to move the specified directories from where they are currently located to another place. For this, you can use search/replace with the new location of each directory in your original content. Here's how it would look:
+# PR Notes: Helper Utility Classes
 
-```plaintext
-Boiler/
-|-- src/
-    |-- main/
-        |-- java/
-            |-- com/
-                |-- piggymade/
-                    |-- common/           # Interface definitions, custom exceptions etc.
-                    |-- config/            # Configuration classes for services
-                    |-- constant/          # Enum and Constant classes
-                    |-- helper/            # Utility classes
-                    |-- model/             # Data Models used across the application
-                        |-- pageable/       # Classes related to pagination
-                        |-- response/        # Response models for services
-```
-Please remember that you need to adjust the paths according to your own project structure. This assumes src/, resources/, and public/ are children of Boiler/. If they are not, you will have to include those as well in your search-and-replace operation. 
+## Overview
+This PR introduces a comprehensive set of utility helper classes that provide common functionality across the application. These utilities are designed to be reusable, well-organized, and follow standard Java patterns.
 
-The properties file can also be moved if needed:
-```plaintext
-Boiler/
-|-- piggy-made.properties         # Application properties file
-```
-Again, adjust the path according to your project structure. The src/, resources/, public/ are children of Boiler/. If not, you need to include them in your search and replace operation.
+## New Utility Classes Added
+
+### 🔐 **Security & Authentication**
+- **AuthUtil** - MD5 hashing and salt generation utilities
+- **CryptUtil** - AES encryption/decryption with CBC mode and PKCS5 padding
+
+### 📊 **Data Processing**
+- **JsonUtil** - JSON serialization/deserialization with Jackson, including string manipulation helpers
+- **ObjectMapperUtil** - Singleton ObjectMapper configuration with date formatting
+- **MapUtil** - Safe parameter extraction from maps with type conversion and defaults
+
+### 📅 **Date & Time**
+- **DateUtil** - Comprehensive date formatting and conversion utilities with locale support
+
+### 🔧 **File & Data Utilities**
+- **Base64Util** - File extension extraction and path parsing
+- **ByteSizeUtil** - Human-readable byte size formatting (KB, MB, GB, etc.)
+- **HandleBarUtil** - Handlebars template processing for HTML and string templates
+
+### 🌐 **Network & Testing**
+- **PingUtil** - URL connectivity testing with configurable timeouts
+- **UnitTestHelper** - Environment detection for local testing scenarios
+- **SecureRandomUtil** - Placeholder for secure random generation functionality
+
+## Key Features
+
+### Design Patterns
+- All classes follow utility class patterns with private constructors
+- Static methods for easy access without instantiation
+- Consistent error handling with proper logging
+- Comprehensive null safety checks throughout
+
+### Configuration & Flexibility
+- Locale-aware date formatting with multiple overloaded methods
+- Configurable timeouts and fallback values
+- Environment variable support
+- Flexible template processing options for both files and inline content
+
+### Testing Support
+- Built-in environment detection for test configurations using `System.getProperty("environment")`
+- Safe parameter extraction with default values to prevent NPE
+- Proper exception handling with meaningful error messages
+
+## Benefits
+- **Reduce Code Duplication** - Common operations centralized in reusable utilities
+- **Improved Maintainability** - Consistent error handling and logging patterns across all utilities
+- **Type Safety** - Proper type conversion with fallback mechanisms for all data types
+- **Performance** - Optimized implementations for common operations like JSON processing
+- **Internationalization Support** - Locale-aware formatting for dates and templates
+
+## Technical Notes
+- Uses modern Java features (LocalDate, Streams, functional interfaces)
+- Lombok annotations for logging reduction
+- Jackson library for efficient JSON processing
+- Handlebars template engine integration
+- Comprehensive exception handling with try-catch blocks
+- Thread-safe implementations where applicable
+
+These utilities provide a solid foundation for the application's common operations and follow established Java best practices, making them ready for production use.
